@@ -34,9 +34,18 @@ gpull() {
 export PS1='\[\033[01;31m\]\u\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
 
 bright() {
+	i=1
+	val=${1:-1}
 	xrandr | grep ' conn' | awk '{print $1}' \
 	| while read device; do
-		xrandr --output $device --brightness ${1:-1}
+		if [ $i -eq 1 ]; then
+			xrandr --output $device --brightness $val
+		else
+			read -p "enter value for $device: " value < /dev/tty
+			[[ $value == "" ]] && value=$val
+			 xrandr --output $device --brightness $value
+		fi
+		let i++
 	done
 }
 
